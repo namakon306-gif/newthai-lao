@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>THAI-LAO LOCK AI PRO</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:10px;
+    padding-bottom:90px;
+    background:#000;
+    color:#fff;
+    font-family:sans-serif;
+}
+
+.page{
+    display:none;
+}
+
+#page1{
+    display:block;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    background:#111;
+    padding:12px;
+    border-radius:14px;
+}
+
+.top-box{
+    display:flex;
+    gap:8px;
+    margin-bottom:12px;
+}
+
+.box{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    padding:6px;
+    border-radius:10px;
+}
+
+.box-a{
+    border:2px solid #00bfff;
+}
+
+.box-b{
+    border:2px solid #ffd700;
+}
+
+.box-c{
+    border:2px solid #00ff99;
+}
+
+.box label{
+    font-weight:bold;
+    font-size:18px;
+}
+
+.box input{
+    width:100%;
+    height:34px;
+    background:transparent;
+    border:none;
+    color:#fff;
+    text-align:center;
+    font-size:18px;
+}
+
+.main-btn{
+    width:100%;
+    height:45px;
+    border:none;
+    border-radius:10px;
+    background:#222;
+    color:#fff;
+    font-size:18px;
+    margin-bottom:10px;
+}
+
+button{
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.97);
+}
+
+.result-box{
+    border:1px solid #333;
+    border-radius:12px;
+    padding:10px;
+    margin-bottom:12px;
+}
+
+.result-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.result{
+    line-height:1.9;
+    word-break:break-word;
+}
+
+.empty{
+    color:#666;
+}
+
+.history-box{
+    width:100%;
+    height:240px;
+    line-height:22px;
+    font-family:monospace;
+    font-size:16px;
+    background:#000;
+    color:#fff;
+    border:2px solid #333;
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+.bottom-menu{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    height:60px;
+    background:#111;
+    display:flex;
+    border-top:1px solid #333;
+}
+
+.bottom-menu button{
+    flex:1;
+    border:none;
+    background:#111;
+    color:#fff;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.match{
+    background:#ff3b30;
+    color:#fff;
+    padding:2px 6px;
+    border-radius:6px;
+}
+
+.ai-step{
+    margin-bottom:10px;
+    padding:10px;
+    border:1px solid #333;
+    border-radius:10px;
+    background:#0d0d0d;
+}
+
+.ai-final{
+    margin-top:10px;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #00ff99;
+    background:#101010;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1 -->
+
+<div class="page" id="page1">
+
+<div class="container">
+
+<div class="top-box">
+
+<div class="box box-a">
+<label>A</label>
+<input id="hundred">
+</div>
+
+<div class="box box-b">
+<label>B</label>
+<input id="ten">
+</div>
+
+<div class="box box-c">
+<label>C</label>
+<input id="unit">
+</div>
+
+</div>
+
+<button class="main-btn"
+onclick="generateAll()">
+แสดงผล
+</button>
+
+<button class="main-btn"
+style="background:#ff3b30"
+onclick="clearData()">
+ล้างข้อมูล
+</button>
+
+<div class="result-box">
+<div class="result-title">A1 + C1</div>
+<div id="resultAC" class="result"></div>
+</div>
+
+<div class="result-box">
+<div class="result-title">B1 + C1</div>
+<div id="resultSpecial" class="result"></div>
+</div>
+
+<div class="result-box">
+<div class="result-title">3 หลัก (B2+C1)</div>
+<div id="result3" class="result"></div>
+</div>
+
+<div class="result-box">
+<div class="result-title">3 หลัก (A2+C1)</div>
+<div id="result3A" class="result"></div>
+</div>
+
+<div class="result-box">
+<div class="result-title">4 หลัก (A2+C2)</div>
+<div id="result4" class="result"></div>
+</div>
+
+<div class="result-box">
+<div class="result-title">4 หลัก (B2+C2)</div>
+<div id="result4A" class="result"></div>
+</div>
+
+</div>
+</div>
+
+<!-- PAGE 2 -->
+
+<div class="page" id="page2">
+
+<div class="container">
+
+<div class="result-box">
+
+<div class="result-title">
+วิเคราะห์ย้อนหลัง
+</div>
+
+<textarea id="historyInput"
+class="history-box"></textarea>
+
+<button class="main-btn"
+onclick="analyzeAI()">
+
+วิเคราะห์
+
+</button>
+
+</div>
+
+<div class="result-box">
+<div class="result-title">🔥 เลขร้อน</div>
+<div id="hotResult" class="result"></div>
+</div>
+
+<div class="result-box">
+<div class="result-title">❄️ เลขเย็น</div>
+<div id="coldResult" class="result"></div>
+</div>
+
+<div class="result-box">
+<div class="result-title">🔒 คู่ล็อค</div>
+<div id="lockResult" class="result"></div>
+</div>
+
+<div class="result-box">
+<div class="result-title">📊 ตำแหน่ง</div>
+<div id="positionResult" class="result"></div>
+</div>
+
+<div class="result-box">
+<div class="result-title">🧠 AI Replace Balance</div>
+<div id="aiReplaceResult" class="result"></div>
+</div>
+
+</div>
+</div>
+
+<!-- MENU -->
+
+<div class="bottom-menu">
+
+<button onclick="showPage(1)">
+หน้าแรก
+</button>
+
+<button onclick="showPage(2)">
+วิเคราะห์
+</button>
+
+</div>
+
+<script>
+
+/* PAGE */
+
+function showPage(p){
+
+    document.getElementById("page1").style.display="none";
+    document.getElementById("page2").style.display="none";
+
+    document.getElementById("page"+p).style.display="block";
+}
+
+/* SAFE */
+
+function getNums(str){
+
+    return (str||"")
+    .replace(/[^0-9]/g,'')
+    .split('')
+    .filter(Boolean);
+}
+
+function uniqueArray(a){
+
+    return [...new Set(a)];
+}
+
+function combine(arr,size){
+
+    let r=new Set();
+
+    function back(p,u){
+
+        if(p.length===size){
+
+            r.add(p.join(''));
+            return;
+        }
+
+        for(let i=0;i<arr.length;i++){
+
+            if(u[i]) continue;
+
+            u[i]=true;
+
+            p.push(arr[i]);
+
+            back(p,u);
+
+            p.pop();
+
+            u[i]=false;
+        }
+    }
+
+    back([],[]);
+
+    return [...r];
+}
+
+function uniqueNoOrder(arr){
+
+    let s=new Set(),r=[];
+
+    arr.forEach(n=>{
+
+        let k=[...n].sort().join('');
+
+        if(!s.has(k)){
+
+            s.add(k);
+            r.push(n);
+        }
+    });
+
+    return r;
+}
+
+/* GLOBAL */
+
+let rawAC=[],
+rawSpecial=[],
+raw3=[],
+raw3A=[],
+raw4=[],
+raw4A=[];
+
+/* COPY */
+
+function copyData(id){
+
+    navigator.clipboard.writeText(
+        document.getElementById(id).innerText
+    );
+
+    alert("คัดลอกแล้ว");
+}
+
+/* MATCH */
+
+function buildMatchSet(){
+
+    let all=[
+
+        ...rawAC,
+        ...rawSpecial,
+        ...raw3,
+        ...raw3A,
+        ...raw4,
+        ...raw4A
+
+    ];
+
+    let count={};
+
+    all.forEach(n=>{
+
+        let k=[...n].sort().join('');
+
+        count[k]=(count[k]||0)+1;
+    });
+
+    return new Set(
+
+        Object.entries(count)
+        .filter(x=>x[1]>1)
+        .map(x=>x[0])
+
+    );
+}
+
+/* RENDER */
+
+function render(id,data){
+
+    let matchSet=buildMatchSet();
+
+    let html=data.length ?
+
+    data.map(n=>{
+
+        let k=[...n].sort().join('');
+
+        return matchSet.has(k)
+
+        ? `<span class="match">${n}</span>`
+
+        : n;
+
+    }).join(" , ")
+
+    :
+
+    '<span class="empty">ไม่มีข้อมูล</span>';
+
+    document.getElementById(id).innerHTML=
+
+    html +
+
+    `<div style="color:#aaa;margin-top:6px">
+    จำนวน: ${data.length}
+    </div>
+
+    <button class="main-btn"
+    style="height:32px;background:#1565c0;margin-top:8px"
+    onclick="copyData('${id}')">
+
+    📋 Copy
+
+    </button>`;
+}
+
+/* GENERATE */
+
+function generateAll(){
+
+    let A=uniqueArray(
+        getNums(document.getElementById("hundred").value)
+    );
+
+    let B=uniqueArray(
+        getNums(document.getElementById("ten").value)
+    );
+
+    let C=uniqueArray(
+        getNums(document.getElementById("unit").value)
+    );
+
+    /* A1 + C1 */
+
+    rawAC=uniqueNoOrder(
+
+        A.flatMap(a=>
+
+            C.map(c=>a+c)
+
+        )
+
+    );
+
+    /* B1 + C1 */
+
+    rawSpecial=uniqueNoOrder(
+
+        B.flatMap(b=>
+
+            C.map(c=>b+c)
+
+        )
+
+    );
+
+    /* B2+C1 */
+
+    let B2=uniqueNoOrder(
+        combine(B,2)
+    );
+
+    raw3=uniqueNoOrder(
+
+        B2.flatMap(x=>
+
+            C.map(c=>x+c)
+
+        )
+
+    );
+
+    /* A2+C1 */
+
+    let A2=uniqueNoOrder(
+        combine(A,2)
+    );
+
+    raw3A=uniqueNoOrder(
+
+        A2.flatMap(x=>
+
+            C.map(c=>x+c)
+
+        )
+
+    );
+
+    /* ================================================= */
+    /* NEW 4 DIGIT LOGIC */
+    /* DOUBLE WIN LOCK */
+    /* ================================================= */
+
+    /* A2 + C2 */
+
+    raw4=[];
+
+    for(let i=0;i<rawAC.length;i++){
+
+        for(let j=i+1;j<rawAC.length;j++){
+
+            raw4.push(
+                rawAC[i] + rawAC[j]
+            );
+        }
+    }
+
+    raw4=uniqueNoOrder(raw4);
+
+    /* B2 + C2 */
+
+    raw4A=[];
+
+    for(let i=0;i<rawSpecial.length;i++){
+
+        for(let j=i+1;j<rawSpecial.length;j++){
+
+            raw4A.push(
+                rawSpecial[i] + rawSpecial[j]
+            );
+        }
+    }
+
+    raw4A=uniqueNoOrder(raw4A);
+
+    /* RENDER */
+
+    render("resultAC",rawAC);
+
+    render("resultSpecial",rawSpecial);
+
+    render("result3",raw3);
+
+    render("result3A",raw3A);
+
+    render("result4",raw4);
+
+    render("result4A",raw4A);
+}
+
+/* ANALYZE */
+
+function analyzeAI(){
+
+    let text=document.getElementById("historyInput").value;
+
+    let rows=text.split('\n')
+    .map(x=>x.replace(/[^0-9]/g,''))
+    .filter(x=>x.length>=3);
+
+    let count={};
+
+    rows.forEach(r=>{
+
+        [...r].forEach(d=>{
+
+            count[d]=(count[d]||0)+1;
+
+        });
+
+    });
+
+    let sorted=Object.entries(count)
+    .sort((a,b)=>b[1]-a[1]);
+
+    document.getElementById("hotResult").innerHTML=
+
+    sorted.slice(0,5)
+    .map(x=>x.join(" = "))
+    .join(" , ");
+
+    document.getElementById("coldResult").innerHTML=
+
+    sorted.slice(-5)
+    .map(x=>x.join(" = "))
+    .join(" , ");
+
+    let pair={};
+
+    rows.forEach(n=>{
+
+        let a=[...new Set(n)];
+
+        for(let i=0;i<a.length;i++){
+
+            for(let j=i+1;j<a.length;j++){
+
+                let p=[a[i],a[j]]
+                .sort()
+                .join('');
+
+                pair[p]=(pair[p]||0)+1;
+            }
+        }
+    });
+
+    document.getElementById("lockResult").innerHTML=
+
+    Object.entries(pair)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,10)
+    .map(x=>x.join(" = "))
+    .join(" , ");
+
+    let p1={},p2={},p3={};
+
+    rows.forEach(n=>{
+
+        if(n[0])
+        p1[n[0]]=(p1[n[0]]||0)+1;
+
+        if(n[1])
+        p2[n[1]]=(p2[n[1]]||0)+1;
+
+        if(n[2])
+        p3[n[2]]=(p3[n[2]]||0)+1;
+
+    });
+
+    function top4(o){
+
+        return Object.entries(o)
+        .sort((a,b)=>b[1]-a[1])
+        .slice(0,4)
+        .map(x=>x[0]);
+    }
+
+    let t1=top4(p1);
+    let t2=top4(p2);
+    let t3=top4(p3);
+
+    let used=[
+
+        ...new Set([
+
+            ...t1,
+            ...t2,
+            ...t3
+
+        ])
+
+    ];
+
+    let miss=[
+
+        '0','1','2','3','4',
+        '5','6','7','8','9'
+
+    ].filter(x=>!used.includes(x));
+
+    document.getElementById("positionResult").innerHTML=
+
+    `
+    🔹 ตำแหน่ง1 :
+    <span class="match">
+    ${t1.join(' ')}
+    </span>
+
+    <br><br>
+
+    🔸 ตำแหน่ง2 :
+    <span class="match">
+    ${t2.join(' ')}
+    </span>
+
+    <br><br>
+
+    🟢 ตำแหน่ง3 :
+    <span class="match">
+    ${t3.join(' ')}
+    </span>
+
+    <hr style="border-color:#333">
+
+    ❌ ไม่มี :
+
+    <span style="color:#ff5252">
+
+    ${miss.join(' ')}
+
+    </span>
+    `;
+
+    runAIReplace(t1,t2,t3,miss);
+}
+
+/* AI REPLACE */
+
+function runAIReplace(t1,t2,t3,miss){
+
+    let pos1=[...t1];
+    let pos2=[...t2];
+    let pos3=[...t3];
+
+    let missing=[...miss]
+    .sort((a,b)=>b-a);
+
+    let steps=[];
+
+    let replaced={};
+
+    function getCounts(){
+
+        let all=[
+
+            ...pos1,
+            ...pos2,
+            ...pos3
+
+        ];
+
+        let c={};
+
+        all.forEach(n=>{
+
+            c[n]=(c[n]||0)+1;
+
+        });
+
+        return c;
+    }
+
+    function getDuplicateKeys(){
+
+        let counts=getCounts();
+
+        return Object.keys(counts)
+
+        .filter(k=>counts[k]>1)
+
+        .sort((a,b)=>a-b);
+    }
+
+    function replaceAt(positionArr,posName){
+
+        let duplicateKeys=getDuplicateKeys();
+
+        for(let d of duplicateKeys){
+
+            if(replaced[posName+"-"+d])
+            continue;
+
+            let index=positionArr.indexOf(d);
+
+            if(index!==-1 && missing.length){
+
+                let newNum=missing.shift();
+
+                positionArr[index]=newNum;
+
+                replaced[posName+"-"+d]=true;
+
+                steps.push(
+
+                `
+                <div class="ai-step">
+
+                🔁 ${posName}
+
+                <br><br>
+
+                แทน
+
+                <span class="match">${d}</span>
+
+                ➜
+
+                <span class="match">${newNum}</span>
+
+                </div>
+                `
+                );
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    let positions=[
+
+        {
+            arr:pos1,
+            name:"ตำแหน่ง1"
+        },
+
+        {
+            arr:pos2,
+            name:"ตำแหน่ง2"
+        },
+
+        {
+            arr:pos3,
+            name:"ตำแหน่ง3"
+        }
+
+    ];
+
+    let turn=0;
+    let safe=0;
+
+    while(missing.length && safe<50){
+
+        let current=positions[turn%3];
+
+        replaceAt(
+            current.arr,
+            current.name
+        );
+
+        turn++;
+        safe++;
+    }
+
+    document.getElementById("aiReplaceResult").innerHTML=
+
+    steps.join('') +
+
+    `
+    <div class="ai-final">
+
+    ✅ FINAL BALANCE
+
+    <hr style="border-color:#333">
+
+    🔹 ตำแหน่ง1 :
+
+    <span class="match">
+
+    ${pos1.join(' ')}
+
+    </span>
+
+    <br><br>
+
+    🔸 ตำแหน่ง2 :
+
+    <span class="match">
+
+    ${pos2.join(' ')}
+
+    </span>
+
+    <br><br>
+
+    🟢 ตำแหน่ง3 :
+
+    <span class="match">
+
+    ${pos3.join(' ')}
+
+    </span>
+
+    <hr style="border-color:#333">
+
+    📌 ใช้เลขครบ :
+
+    <span style="color:#00ff99">
+
+    ${[...new Set([
+        ...pos1,
+        ...pos2,
+        ...pos3
+    ])].sort().join(' ')}
+
+    </span>
+
+    </div>
+    `;
+}
+
+/* CLEAR */
+
+function clearData(){
+
+    if(confirm("ล้างทั้งหมด?")){
+
+        localStorage.clear();
+
+        location.reload();
+    }
+}
+
+/* SAVE */
+
+window.addEventListener("load",()=>{
+
+    ["hundred","ten","unit","historyInput"]
+
+    .forEach(id=>{
+
+        let el=document.getElementById(id);
+
+        if(!el) return;
+
+        el.value=localStorage.getItem(id)||"";
+
+        el.addEventListener("input",()=>{
+
+            localStorage.setItem(id,el.value);
+
+        });
+
+    });
+
+    if('serviceWorker' in navigator){
+
+        navigator.serviceWorker
+        .register('./service-worker.js')
+        .catch(()=>console.log("SW not found"));
+    }
+
+});
+
+</script>
+
+</body>
+</html>
